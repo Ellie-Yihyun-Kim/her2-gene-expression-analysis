@@ -91,3 +91,79 @@
 
 - Re-running an earlier cell does not automatically update variables created in later cells.
 - If an upstream variable changes, dependent cells need to be run again.
+
+### `.sort_values()`
+- Sorts a DataFrame by the values in a selected column.
+- Example: `paired_df.sort_values("change").head()`
+- Used to find the patients with the largest decreases in expression.
+
+### `.loc[]`
+- Selects data using row and column labels.
+- Syntax: `df.loc[row_label, column_label]`
+- Example: `paired_df.loc["Pt10", "Baseline"]`
+  - `"Pt10"` is the row label (patient).
+  - `"Baseline"` is the column label (timepoint).
+
+### `.pivot()`
+- Reshapes a DataFrame by organizing data into new rows and columns.
+- Example: `analysis_df.pivot(index="patient", columns="timepoint", values="ERBB2_expression")`
+  - `index="patient"`: Uses patient IDs as row labels.
+  - `columns="timepoint"`: Creates Baseline and Post columns.
+  - `values="ERBB2_expression"`: Fills the table with expression values.
+- Used to compare Baseline and Post measurements for each patient.
+
+## Statistical Concepts
+
+### Outlier
+- **Outlier**: A data point that is unusually high or low compared to other values.
+- Outliers can affect the mean more strongly than the median.
+- An outlier is not necessarily an error. It may reflect real biological variation.
+
+**In this project:**
+- The mean expression change (-1.21) was more negative than the median (-0.80).
+- Some patients with relatively large decreases may have influenced the mean.
+- However, this difference alone does not confirm the presence of outliers.
+
+### Direction and Magnitude
+- **Direction**: Whether a value increased or decreased.
+- **Magnitude**: How large a change is, regardless of direction.
+- Example:
+  - Baseline = 12.5, Post = 9.0
+  - Change = Post - Baseline = -3.5
+  - Direction = decrease
+  - Magnitude = 3.5
+
+### Mean vs. Median
+- **Mean**: The average of all values.
+- **Median**: The middle value when the data are sorted.
+- The mean is more sensitive to extreme values than the median.
+
+**In this project:**
+- Mean expression change = -1.21
+- Median expression change = -0.80
+- Some large decreases may have influenced the mean.
+- This does not necessarily mean that outliers are present.
+
+## Data Visualization Concepts
+
+### `plt.plot(x, y)`
+- Plots points using corresponding x and y values.
+- Example: `plt.plot(["Baseline", "Post"], [13.02395, 8.553489])`
+- Creates two points:
+  - (Baseline, 13.02395)
+  - (Post, 8.553489)
+- Connects the points with a line.
+- A downward line indicates a decrease from Baseline to Post.
+
+### Overplotting
+- Overplotting occurs when multiple lines or data points overlap, making a graph difficult to read.
+- In this project, all 32 patients' expression changes were plotted together.
+- Although all 6 increasing lines were visible, some lines overlapped or were very close to each other.
+- This made it difficult to distinguish individual patient changes.
+
+### Histogram vs. Paired Line Plot
+- **Histogram**: Shows the distribution of expression changes across patients.
+  - Useful for seeing where values are concentrated and how widely they vary.
+- **Paired Line Plot**: Shows how expression changes from Baseline to Post for each patient.
+  - Useful for comparing the direction and size of individual patient changes.
+- The two plots show different aspects of the same data.
