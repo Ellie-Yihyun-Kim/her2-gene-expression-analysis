@@ -265,3 +265,39 @@ The p-value has not yet been calculated.
 - **Paired Line Plot**: Shows how expression changes from Baseline to Post for each patient.
   - Useful for comparing the direction and size of individual patient changes.
 - The two plots show different aspects of the same data.
+
+## Microarray Concepts
+
+### What Is a Microarray?
+
+A gene expression microarray is an experimental technology used to measure signals associated with RNA abundance.
+
+- RNA-derived targets are prepared from biological samples.
+- Labeled targets hybridize to complementary DNA probes on the microarray.
+- Fluorescence signals are measured and processed to obtain expression values.
+- These values are not direct counts of RNA molecules or measurements of protein abundance.
+
+### Probe vs. Feature
+
+- **Probe:** A DNA sequence designed to hybridize with a complementary target sequence.
+- **Feature:** A measurement unit represented in the expression dataset. Depending on the platform, it may correspond to a single probe or a summarized group of probes, such as a probe set or transcript cluster.
+- **Feature ID:** A platform-specific identifier for a measurement unit, not necessarily a unique gene symbol.
+
+**Key distinction:** One feature does not always correspond to exactly one gene.
+
+### In This Project
+
+- **Platform:** GPL23159
+- **Feature ID:** `TC1700012249.hg.1`
+- **Associated annotation:** ERBB2 and MIR4728 (to be verified against the official platform annotation).
+
+ERBB2 is a gene, whereas HER2 is the protein encoded by ERBB2.
+
+We describe the analyzed measurement as **ERBB2-associated expression** rather than ERBB2-specific mRNA abundance or HER2 protein expression.
+
+### Interpretation Limitations
+
+- Microarray expression values do not directly measure HER2 protein abundance or activity.
+- A feature associated with multiple transcript annotations cannot automatically be interpreted as a gene-specific measurement.
+- A statistically significant paired change does not establish that treatment caused the change.
+- The results from 32 paired patients cannot automatically be generalized to all breast cancer patients.
