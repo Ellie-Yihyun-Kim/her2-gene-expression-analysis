@@ -222,3 +222,6 @@ data/
 
 # Virtual environment
 .venv/
+
+# Backup notebook
+/notebooks/01_data_exploration_backup.ipynb
