@@ -230,17 +230,182 @@ df=n-1
 
 For 32 paired patients:
 
-- Mean paired change = −1.2077
-- SD = 1.4742
-- SE = 0.2606
-- t-statistic ≈ −4.63
-- df = 31
-- 26 patients decreased; 6 patients increased
+Mean paired change = −1.2077
 
-The observed average ERBB2-associated expression change is negative, but individual patients showed different directions and magnitudes of change.
+SD = 1.4742
 
-The p-value has not yet been calculated.
+SE = 0.2606
 
+t-statistic ≈ −4.63
+
+df = 31
+
+p-value ≈ 0.0000611
+
+95% CI = [−1.7392, −0.6762]
+
+26 patients decreased; 6 patients increased
+
+The observed average ERBB2-associated expression change was negative, but individual patients showed different directions and magnitudes of change.
+
+The paired t-test showed a statistically significant mean change (p < 0.001). The 95% confidence interval did not include zero, which is consistent with the t-test result.
+
+However, statistical significance does not establish that treatment caused the observed change.
+
+#### 5. Paired t-test and p-value
+##### What is a paired t-test?
+
+A paired t-test evaluates whether the population mean difference between two related measurements is significantly different from a hypothesized value, usually zero.
+
+##### Why did I use it in this project?
+
+- I analyzed Baseline and Post measurements from the same 32 patients.
+- Because the measurements were paired within each patient, I used a paired t-test rather than an independent two-sample t-test.
+- The test evaluates whether the population mean of the patient-level differences (Post - Baseline) differs from zero.
+
+*Hypotheses:*
+
+- Null hypothesis (H₀): The population mean paired difference equals zero.
+- Alternative hypothesis (H₁): The population mean paired difference does not equal zero.
+
+##### How does the t-test work?
+- The t-statistic measures how far the observed mean difference is from the hypothesized value, in units of standard error.
+- If the mean difference stays the same but SE increases, the absolute t-statistic decreases.
+- With the same degrees of freedom, a smaller absolute t-statistic corresponds to a larger two-sided p-value.
+
+##### What does the p-value mean?
+- The p-value is the probability of obtaining a test statistic at least as extreme as the observed one, assuming the null hypothesis is true.
+- It is not the probability that the null hypothesis is true.
+
+Python:
+```
+t_stat, p_value = stats.ttest_rel(
+    paired_df["Post"],
+    paired_df["Baseline"]
+)
+```
+##### Interpretation in this project:
+
+The paired t-test produced a p-value of approximately 0.0000611, providing strong statistical evidence against the null hypothesis of zero population mean change.
+
+However, this result does not establish that treatment caused the observed expression change.
+
+#### 6. Understanding the 95% Confidence Interval
+
+##### What is a 95% Confidence Interval (CI)?
+
+A 95% confidence interval estimates a range of plausible values for the unknown population mean.
+
+If we repeatedly collected samples and calculated a 95% CI from each sample, approximately 95% of those intervals would contain the true population mean, assuming the statistical assumptions hold.
+
+It does not mean that there is a 95% probability that the fixed population mean lies within this particular interval.
+
+##### How is the 95% CI calculated?
+
+For the mean paired difference:
+
+\[
+95\%\ CI = \bar{d} \pm t_{\text{critical}} \times SE
+\]
+
+- `mean_change` is the observed mean paired difference.
+- `standard_error` measures uncertainty in the sample mean.
+- `t_critical` determines the margin of error based on the confidence level and degrees of freedom.
+
+##### Why do we use `stats.t.ppf(0.975, 31)`?
+
+For a two-sided 95% CI:
+
+- The central 95% of the t-distribution is used.
+- The remaining 5% is divided equally between the two tails (2.5% each).
+- The cumulative probability to the left of the positive critical t-value is 97.5%, or 0.975.
+- The degrees of freedom are `n - 1 = 31` because there are 32 paired patients.
+
+`stats.t.ppf()` returns the t-value corresponding to a specified cumulative probability.
+
+```python
+t_critical = stats.t.ppf(0.975, 31)
+```
+
+The critical t-value is approximately 2.04.
+
+##### Python Code and Independent Validation
+
+```python
+t_critical = stats.t.ppf(
+    1 - 0.05 / 2,
+    degrees_freedom
+)
+
+ci_lower = mean_change - t_critical * standard_error
+ci_upper = mean_change + t_critical * standard_error
+```
+
+I independently checked the result using:
+
+```python
+ci_check = stats.t.interval(
+    confidence=0.95,
+    df=degrees_freedom,
+    loc=mean_change,
+    scale=standard_error
+)
+```
+
+Both approaches produced the same confidence interval.
+
+##### Interpretation in This Project
+
+- Mean paired change: −1.2077
+- 95% CI: [−1.7392, −0.6762]
+- The interval does not contain zero.
+- This is consistent with the statistically significant two-sided paired t-test (p < 0.001).
+
+The estimated population mean ERBB2-associated expression change is negative, although the analysis does not establish that treatment caused the change.
+
+#### 7. Python Functions for Statistical Analysis
+
+| Function | Purpose |
+|---|---|
+| `stats.ttest_rel()` | Performs a paired t-test and returns the t-statistic and p-value. |
+| `stats.t.ppf()` | Returns the t-value corresponding to a specified cumulative probability. |
+| `stats.t.cdf()` | Returns the cumulative probability to the left of a specified t-value. |
+| `stats.t.interval()` | Calculates an interval from the t-distribution using a specified confidence level, degrees of freedom, location, and scale. |
+
+**Key distinction:**
+
+- `ttest_rel()` tests a hypothesis about the mean paired difference.
+- `t.ppf()` finds a critical t-value from a cumulative probability.
+- `t.cdf()` converts a t-value into a cumulative probability.
+- `t.interval()` can calculate a confidence interval for the mean when `loc` is the sample mean and `scale` is its standard error.
+
+**What I learned:**
+
+The paired t-test and 95% CI use the same paired differences, standard error, and t-distribution, but answer different questions:
+
+- **Paired t-test:** Is the population mean paired difference statistically different from zero?
+- **95% CI:** What range of values is plausible for the population mean paired difference?
+
+#### 8. Concepts to Review Later
+
+**Current learning status:**
+
+I can understand these statistical concepts when they are explained and answer guided questions, but I still need practice explaining them independently.
+
+**Topics to review:**
+
+- Explain what a paired t-test is and why I used it for this project.
+- Explain the difference between SD and SE in my own words.
+- Explain why the degrees of freedom are `n - 1` for a paired t-test.
+- Explain how the t-statistic and p-value are related.
+- Explain why `stats.t.ppf(0.975, 31)` is used to calculate a two-sided 95% CI.
+- Explain the difference between CDF and PPF.
+- Interpret a 95% CI without confusing it with a 95% probability that the population mean lies within the calculated interval.
+- Explain how I independently validated the AI-generated confidence interval calculation.
+
+**Future practice goal:**
+
+Explain the statistical methods and results of this project in 1–2 minutes without referring to notes, and answer follow-up questions about the analysis.
 
 ## Data Visualization Concepts
 
@@ -301,3 +466,67 @@ We describe the analyzed measurement as **ERBB2-associated expression** rather t
 - A feature associated with multiple transcript annotations cannot automatically be interpreted as a gene-specific measurement.
 - A statistically significant paired change does not establish that treatment caused the change.
 - The results from 32 paired patients cannot automatically be generalized to all breast cancer patients.
+
+## AI-Assisted Workflow and Git
+
+### 1. Using GitHub Copilot Agent
+
+**Purpose:**
+I used GitHub Copilot Agent to help add a 95% confidence interval calculation to my existing ERBB2 expression analysis notebook.
+
+**What Copilot Agent did:**
+- Generated Python code to calculate the 95% confidence interval.
+- Used the mean paired difference, standard error, degrees of freedom, and t-distribution.
+- Helped clean up unintended changes to existing Jupyter Notebook cells after the notebook was re-executed.
+
+**What I did:**
+- Identified the analysis I wanted to add.
+- Reviewed the AI-generated code and its results.
+- Independently validated the confidence interval using `stats.t.interval()`.
+- Confirmed that both calculation methods produced the same results.
+
+**Key lesson:**
+AI-generated code should be reviewed and validated rather than accepted without verification.
+
+### 2. Managing Jupyter Notebook Changes
+
+Jupyter Notebook files (`.ipynb`) store not only code but also execution counts, cell outputs, and metadata.
+
+Re-running cells can therefore create many changes in Git, even when the code itself has not changed.
+
+**In this project:**
+- Re-executing the notebook caused unintended changes to existing cells.
+- Copilot Agent helped restore the original execution counts and outputs.
+- The final notebook changes were limited to two newly added code cells.
+- The original 110 cells were preserved.
+
+**Key lesson:**
+Review notebook changes before committing to avoid including unrelated modifications.
+
+### 3. Git and GitHub Workflow
+
+**Branch:**
+- I worked on a separate branch named `agentic-stats`.
+- This allowed me to add and validate the confidence interval without changing the `main` branch.
+
+**Commit:**
+- A commit records a snapshot of tracked changes.
+- I committed the confidence interval update with the message:
+  `Add and validate 95% confidence interval for ERBB2 expression`
+
+**Push:**
+- Pushing uploads local commits to the remote GitHub repository.
+- I successfully pushed the `agentic-stats` branch to GitHub.
+
+**Key distinction:**
+- `git add` stages changes.
+- `git commit` records staged changes in local repository history.
+- `git push` uploads local commits to the remote repository.
+
+### 4. Lessons Learned
+
+- AI assistance can help implement unfamiliar statistical methods, but I remain responsible for understanding and validating the results.
+- Independent verification is important when using AI-generated code.
+- Jupyter Notebook execution can introduce unintended file changes.
+- Git branches help separate experimental work from the main project.
+- Clear documentation makes it easier to explain both the analysis and the development process later.
