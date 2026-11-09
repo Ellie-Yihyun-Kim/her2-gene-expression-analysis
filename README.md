@@ -65,7 +65,15 @@ This experience helped me practice AI-assisted coding while emphasizing the impo
 
 The average ERBB2-associated expression change was negative, and the paired t-test indicated a statistically significant difference between baseline and post-treatment measurements.
 
+### Figure 1. Distribution of ERBB2 Expression Changes
+
+![Distribution of ERBB2 expression changes](figures/figure1_expression_change_distribution.png)
+
 However, individual patients showed different directions and magnitudes of change, highlighting variability within the analyzed group.
+
+### Figure 2. Patient-Level ERBB2 Expression Changes
+
+![Paired ERBB2 expression changes across 32 patients](figures/figure2_patient_level_changes.png)
 
 ## Limitations
 
